@@ -345,6 +345,26 @@
     } else if ([key isEqualToString:@"userAgent"]) {
       NSString* userAgent = settings[key];
       [self updateUserAgent:[userAgent isEqual:[NSNull null]] ? nil : userAgent];
+    } else if ([key isEqualToString:@"contentBlockFilters"]) {
+        if (@available(iOS 11.0, *)) {
+            if ([settings[key] isKindOfClass:[NSArray class]]) {
+                NSArray* contentBlockFilters = settings[key];
+                NSData *data = [NSJSONSerialization dataWithJSONObject: contentBlockFilters options:0 error:nil];
+                NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                __weak typeof(_webView) wv = _webView;
+                [WKContentRuleListStore.defaultStore compileContentRuleListForIdentifier:key
+                                                                  encodedContentRuleList:json
+                                                                       completionHandler:
+                 ^(WKContentRuleList *contentRuleList, NSError *error) {
+                    if (error != nil) {
+                        return;
+                    }
+                    if (contentRuleList) {
+                        [wv.configuration.userContentController addContentRuleList: contentRuleList];
+                    }
+                }];
+            }
+        }
     } else {
       [unknownKeys addObject:key];
     }
