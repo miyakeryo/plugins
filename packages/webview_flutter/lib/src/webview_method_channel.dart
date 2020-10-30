@@ -190,7 +190,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
       map['contentBlockFilters'] = settings.contentBlockFilters.map((filter) {
         return {
           'trigger': {'url-filter': filter},
-          'action': 'block'
+          'action': {'type': 'block'}
         };
       }).toList();
     }
