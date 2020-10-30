@@ -192,6 +192,9 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
       case "reload":
         reload(result);
         break;
+      case "stopLoading":
+        stopLoading(result);
+        break;
       case "currentUrl":
         currentUrl(result);
         break;
@@ -263,6 +266,11 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
 
   private void reload(Result result) {
     webView.reload();
+    result.success(null);
+  }
+
+  private void stopLoading(Result result) {
+    webView.stopLoading();
     result.success(null);
   }
 

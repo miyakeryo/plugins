@@ -233,6 +233,12 @@ abstract class WebViewPlatformController {
         "WebView reload is not implemented on the current platform");
   }
 
+  /// Stop loading.
+  Future<void> stopLoading() {
+    throw UnimplementedError(
+        "WebView stopLoading is not implemented on the current platform");
+  }
+
   /// Clears all caches used by the [WebView].
   ///
   /// The following caches are cleared:

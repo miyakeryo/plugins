@@ -655,6 +655,11 @@ class WebViewController {
     return _webViewPlatformController.reload();
   }
 
+  /// Stop loading.
+  Future<void> stopLoading() {
+    return _webViewPlatformController.stopLoading();
+  }
+
   /// Clears all caches used by the [WebView].
   ///
   /// The following caches are cleared:
