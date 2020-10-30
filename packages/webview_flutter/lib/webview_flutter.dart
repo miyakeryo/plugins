@@ -219,6 +219,7 @@ class WebView extends StatefulWidget {
     this.userAgent,
     this.initialMediaPlaybackPolicy =
         AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
+    this.contentBlockFilters,
   })  : assert(javascriptMode != null),
         assert(initialMediaPlaybackPolicy != null),
         super(key: key);
@@ -392,6 +393,8 @@ class WebView extends StatefulWidget {
   /// The default policy is [AutoMediaPlaybackPolicy.require_user_action_for_all_media_types].
   final AutoMediaPlaybackPolicy initialMediaPlaybackPolicy;
 
+  final Set<String> contentBlockFilters;
+
   @override
   State<StatefulWidget> createState() => _WebViewState();
 }
@@ -466,6 +469,7 @@ WebSettings _webSettingsFromWidget(WebView widget) {
     debuggingEnabled: widget.debuggingEnabled,
     gestureNavigationEnabled: widget.gestureNavigationEnabled,
     userAgent: WebSetting<String>.of(widget.userAgent),
+    contentBlockFilters: widget.contentBlockFilters,
   );
 }
 
@@ -475,15 +479,18 @@ WebSettings _clearUnchangedWebSettings(
   assert(currentValue.javascriptMode != null);
   assert(currentValue.hasNavigationDelegate != null);
   assert(currentValue.debuggingEnabled != null);
+  assert(currentValue.contentBlockFilters != null);
   assert(currentValue.userAgent.isPresent);
   assert(newValue.javascriptMode != null);
   assert(newValue.hasNavigationDelegate != null);
   assert(newValue.debuggingEnabled != null);
+  assert(newValue.contentBlockFilters != null);
   assert(newValue.userAgent.isPresent);
 
   JavascriptMode javascriptMode;
   bool hasNavigationDelegate;
   bool debuggingEnabled;
+  Set<String> contentBlockFilters = <String>{};
   WebSetting<String> userAgent = WebSetting<String>.absent();
   if (currentValue.javascriptMode != newValue.javascriptMode) {
     javascriptMode = newValue.javascriptMode;
@@ -494,6 +501,9 @@ WebSettings _clearUnchangedWebSettings(
   if (currentValue.debuggingEnabled != newValue.debuggingEnabled) {
     debuggingEnabled = newValue.debuggingEnabled;
   }
+  if (currentValue.contentBlockFilters != newValue.contentBlockFilters) {
+    contentBlockFilters = newValue.contentBlockFilters;
+  }
   if (currentValue.userAgent != newValue.userAgent) {
     userAgent = newValue.userAgent;
   }
@@ -503,6 +513,7 @@ WebSettings _clearUnchangedWebSettings(
     hasNavigationDelegate: hasNavigationDelegate,
     debuggingEnabled: debuggingEnabled,
     userAgent: userAgent,
+    contentBlockFilters: contentBlockFilters,
   );
 }
 
