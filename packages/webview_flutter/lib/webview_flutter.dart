@@ -479,12 +479,10 @@ WebSettings _clearUnchangedWebSettings(
   assert(currentValue.javascriptMode != null);
   assert(currentValue.hasNavigationDelegate != null);
   assert(currentValue.debuggingEnabled != null);
-  assert(currentValue.contentBlockFilters != null);
   assert(currentValue.userAgent.isPresent);
   assert(newValue.javascriptMode != null);
   assert(newValue.hasNavigationDelegate != null);
   assert(newValue.debuggingEnabled != null);
-  assert(newValue.contentBlockFilters != null);
   assert(newValue.userAgent.isPresent);
 
   JavascriptMode javascriptMode;

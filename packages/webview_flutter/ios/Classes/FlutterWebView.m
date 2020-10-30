@@ -339,11 +339,12 @@
                 NSData *data = [NSJSONSerialization dataWithJSONObject: contentBlockFilters options:0 error:nil];
                 NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                 __weak typeof(_webView) wv = _webView;
-                [WKContentRuleListStore.defaultStore compileContentRuleListForIdentifier:key
+                [WKContentRuleListStore.defaultStore compileContentRuleListForIdentifier:@"ContentBlockingRules"
                                                                   encodedContentRuleList:json
                                                                        completionHandler:
                  ^(WKContentRuleList *contentRuleList, NSError *error) {
                     if (error != nil) {
+                        NSLog(@"Error: %@", error);
                         return;
                     }
                     if (contentRuleList) {
