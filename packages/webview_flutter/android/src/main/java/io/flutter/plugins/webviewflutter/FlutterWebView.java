@@ -119,7 +119,11 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     }
     if (params.containsKey("initialUrl")) {
       String url = (String) params.get("initialUrl");
-      webView.loadUrl(url);
+      if (url == null || url.contains("://")) {
+        webView.loadUrl(url);
+      } else {
+        webView.loadUrl("file:///android_asset/flutter_assets/" + url);
+      }
     }
   }
 
@@ -238,7 +242,11 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     if (headers == null) {
       headers = Collections.emptyMap();
     }
-    webView.loadUrl(url, headers);
+    if (url == null || url.contains("://")) {
+      webView.loadUrl(url, headers);
+    } else {
+      webView.loadUrl("file:///android_asset/flutter_assets/" + url);
+    }
     result.success(null);
   }
 
