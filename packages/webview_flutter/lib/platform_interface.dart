@@ -383,7 +383,7 @@ class WebSettings {
     this.debuggingEnabled,
     this.gestureNavigationEnabled,
     @required this.userAgent,
-    this.contentBlockFilters,
+    this.contentBlockDomains,
   }) : assert(userAgent != null);
 
   /// The JavaScript execution mode to be used by the webview.
@@ -412,11 +412,11 @@ class WebSettings {
   /// See also: [WebView.gestureNavigationEnabled]
   final bool gestureNavigationEnabled;
 
-  final Set<String> contentBlockFilters;
+  final List<String> contentBlockDomains;
 
   @override
   String toString() {
-    return 'WebSettings(javascriptMode: $javascriptMode, hasNavigationDelegate: $hasNavigationDelegate, debuggingEnabled: $debuggingEnabled, gestureNavigationEnabled: $gestureNavigationEnabled, userAgent: $userAgent, contentBlockFilters: $contentBlockFilters)';
+    return 'WebSettings(javascriptMode: $javascriptMode, hasNavigationDelegate: $hasNavigationDelegate, debuggingEnabled: $debuggingEnabled, gestureNavigationEnabled: $gestureNavigationEnabled, userAgent: $userAgent, contentBlockDomains: $contentBlockDomains)';
   }
 }
 

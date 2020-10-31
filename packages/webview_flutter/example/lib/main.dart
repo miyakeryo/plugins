@@ -83,7 +83,7 @@ class _WebViewExampleState extends State<WebViewExample> {
             print('Page finished loading: $url');
           },
           gestureNavigationEnabled: true,
-          contentBlockFilters: ['.*\/github.com\/.*'].toSet(),
+          contentBlockDomains: ['github.com', 'ad-score.com'],
         );
       }),
       floatingActionButton: favoriteButton(),

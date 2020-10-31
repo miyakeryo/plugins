@@ -183,13 +183,8 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
         'gestureNavigationEnabled', settings.gestureNavigationEnabled);
     _addSettingIfPresent('userAgent', settings.userAgent);
 
-    if (settings.contentBlockFilters != null) {
-      map['contentBlockFilters'] = settings.contentBlockFilters.map((filter) {
-        return {
-          'trigger': {'url-filter': filter},
-          'action': {'type': 'block'}
-        };
-      }).toList();
+    if (settings.contentBlockDomains != null) {
+      map['contentBlockDomains'] = settings.contentBlockDomains;
     }
     return map;
   }
