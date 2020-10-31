@@ -345,14 +345,23 @@
     } else if ([key isEqualToString:@"userAgent"]) {
       NSString* userAgent = settings[key];
       [self updateUserAgent:[userAgent isEqual:[NSNull null]] ? nil : userAgent];
-    } else if ([key isEqualToString:@"contentBlockFilters"]) {
+    } else if ([key isEqualToString:@"contentBlockDomains"]) {
         if (@available(iOS 11.0, *)) {
             if ([settings[key] isKindOfClass:[NSArray class]]) {
-                NSArray* contentBlockFilters = settings[key];
+                // https://developer.apple.com/documentation/safariservices/creating_a_content_blocker
+                NSArray* contentBlockDomains = settings[key];
+                NSMutableArray* contentBlockFilters = [NSMutableArray array];
+                [contentBlockDomains enumerateObjectsUsingBlock:^(NSString *obj, NSUInteger i, BOOL *stop) {
+                     NSString *domain = [obj stringByReplacingOccurrencesOfString:@"." withString:@"\\."];
+                     [contentBlockFilters addObject:@{
+                        @"trigger": @{@"url-filter": [NSString stringWithFormat:@".*%@.*", domain]},
+                        @"action": @{@"type": @"block"}
+                     }];
+                }];
                 NSData *data = [NSJSONSerialization dataWithJSONObject: contentBlockFilters options:0 error:nil];
                 NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                 __weak typeof(_webView) wv = _webView;
-                [WKContentRuleListStore.defaultStore compileContentRuleListForIdentifier:@"ContentBlockingRules"
+                [WKContentRuleListStore.defaultStore compileContentRuleListForIdentifier:key
                                                                   encodedContentRuleList:json
                                                                        completionHandler:
                  ^(WKContentRuleList *contentRuleList, NSError *error) {
@@ -362,6 +371,7 @@
                     }
                     if (contentRuleList) {
                         [wv.configuration.userContentController addContentRuleList: contentRuleList];
+                        [wv reload];
                     }
                 }];
             }
