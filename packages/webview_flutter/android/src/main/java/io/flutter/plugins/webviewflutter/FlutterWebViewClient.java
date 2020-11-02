@@ -7,18 +7,22 @@ package io.flutter.plugins.webviewflutter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
 import androidx.webkit.WebViewClientCompat;
 import io.flutter.plugin.common.MethodChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -30,6 +34,7 @@ class FlutterWebViewClient {
   private static final String TAG = "FlutterWebViewClient";
   private final MethodChannel methodChannel;
   private boolean hasNavigationDelegate;
+  private final List<String> contentBlockDomains = new ArrayList<String>();
 
   FlutterWebViewClient(MethodChannel methodChannel) {
     this.methodChannel = methodChannel;
@@ -78,6 +83,9 @@ class FlutterWebViewClient {
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+    if (!shouldInterceptRequest(view, request.getUrl().toString())) {
+      return true;
+    }
     if (!hasNavigationDelegate) {
       return false;
     }
@@ -95,6 +103,19 @@ class FlutterWebViewClient {
     //
     // For more details see: https://github.com/flutter/flutter/issues/25329#issuecomment-464863209
     return request.isForMainFrame();
+  }
+
+  public boolean shouldInterceptRequest(WebView view, String url) {
+    if (contentBlockDomains != null) {
+      Uri uri = Uri.parse(url);
+      String host = uri.getHost();
+      for (String domain : contentBlockDomains) {
+        if (host.endsWith(domain)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -167,6 +188,16 @@ class FlutterWebViewClient {
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         return FlutterWebViewClient.this.shouldOverrideUrlLoading(view, request);
+      }
+
+      @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+      @Override
+      public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+        if(FlutterWebViewClient.this.shouldInterceptRequest(view, url)) {
+          return super.shouldInterceptRequest(view, url);
+        } else {
+          return new WebResourceResponse("text/javascript", "UTF-8", null);
+        }
       }
 
       @Override
@@ -287,5 +318,10 @@ class FlutterWebViewClient {
         webView.loadUrl(url);
       }
     }
+  }
+
+  public void setContentBlockDomains(List<String> bomains) {
+    contentBlockDomains.clear();
+    contentBlockDomains.addAll(bomains);
   }
 }
